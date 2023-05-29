@@ -14,15 +14,13 @@ class ImagesListViewController: UIViewController {
     //MARK: - Variables
     private let photosName: [String] = Array(0..<20).map{ "\($0)" }
     
-    
+    //MARK: - Life cycle
     override func viewDidLoad() {
         super.viewDidLoad()
         tableView.delegate = self
         tableView.dataSource = self
         tableView.contentInset = UIEdgeInsets(top: 12, left: 0, bottom: 12, right: 0)
     }
-    
-    
 }
 
 //MARK: - TableView DataSource
@@ -43,16 +41,16 @@ extension ImagesListViewController:UITableViewDataSource{
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-            let cell = tableView.dequeueReusableCell(withIdentifier: ImagesListCell.reuseIdentifier, for: indexPath)
-            
-            guard let imageListCell = cell as? ImagesListCell else {
-                print("Error create cell")
-                return UITableViewCell()
-            }
-            
-            configCell(for: imageListCell, with: indexPath)
-            return imageListCell
+        let cell = tableView.dequeueReusableCell(withIdentifier: ImagesListCell.reuseIdentifier, for: indexPath)
+        
+        guard let imageListCell = cell as? ImagesListCell else {
+            print("Error create cell")
+            return UITableViewCell()
         }
+        
+        configCell(for: imageListCell, with: indexPath)
+        return imageListCell
+    }
     
     
 }
@@ -61,12 +59,13 @@ extension ImagesListViewController:UITableViewDataSource{
 extension ImagesListViewController:UITableViewDelegate{
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat{
-        let cell = tableView.dequeueReusableCell(withIdentifier: ImagesListCell.reuseIdentifier, for: indexPath)
-        guard let imageListCell = cell as? ImagesListCell else {
-            print("Error create cell")
+        guard let image = UIImage(named: photosName[indexPath.row]) else {
             return 0
         }
-       // let height = imageListCell.imageCell.frame.width - (imageListCell.imageCell.image?.size.width)!
-        return 100
+        let imageWidth = image.size.width
+        let imageViewWidth = tableView.bounds.width - 8
+        let scale = imageViewWidth / imageWidth
+        let cellHeight = image.size.height * scale + 8
+        return cellHeight
     }
 }
