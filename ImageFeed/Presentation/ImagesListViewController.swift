@@ -29,7 +29,7 @@ extension ImagesListViewController:UITableViewDataSource{
     func configCell(for cell: ImagesListCell, with indexPath: IndexPath) {
         cell.imageCell.image = UIImage(named: "\(indexPath.row)")
         cell.dateLabel.text = Date().dateString
-        if indexPath.row % 2 == 0{
+        if indexPath.row  % 2 != 0{
             cell.likeButton.setImage(UIImage(named: "Active"), for: .normal)
         }else{
             cell.likeButton.setImage(UIImage(named: "No Active"), for: .normal)
