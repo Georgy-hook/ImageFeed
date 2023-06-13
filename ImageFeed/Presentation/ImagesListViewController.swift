@@ -7,12 +7,13 @@
 
 import UIKit
 
-class ImagesListViewController: UIViewController {
+final class ImagesListViewController: UIViewController {
     //MARK: - Outlets
     @IBOutlet private var tableView: UITableView!
     
     //MARK: - Variables
     private let photosName: [String] = Array(0..<20).map{ "\($0)" }
+    private let ShowSingleImageSegueIdentifier = "ShowSingleImage"
     
     //MARK: - Life cycle
     override func viewDidLoad() {
@@ -68,4 +69,30 @@ extension ImagesListViewController:UITableViewDelegate{
         let cellHeight = image.size.height * scale + 8
         return cellHeight
     }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        performSegue(withIdentifier: ShowSingleImageSegueIdentifier, sender: indexPath)
+    }
+}
+
+//MARK: - Preferred Status Bar
+extension ImagesListViewController{
+    override var preferredStatusBarStyle: UIStatusBarStyle{
+        .lightContent
+    }
+}
+
+//MARK: - prepareForSegue
+extension ImagesListViewController{
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == ShowSingleImageSegueIdentifier{
+            let viewController = segue.destination as! SingleImageViewController
+            let indexPath = sender as! IndexPath
+            let image = UIImage(named: photosName[indexPath.row])
+            viewController.image = image
+        } else{
+            super.prepare(for: segue, sender: sender)
+        }
+    }
+    
 }
