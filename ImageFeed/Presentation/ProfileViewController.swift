@@ -9,6 +9,7 @@ import UIKit
 
 class ProfileViewController: UIViewController {
     
+
     override func viewDidLoad() {
         super.viewDidLoad()
         initialize()
@@ -75,7 +76,7 @@ extension ProfileViewController{
         exitButton.translatesAutoresizingMaskIntoConstraints = false
         
         //MARK: - Layout
-        view.translatesAutoresizingMaskIntoConstraints = false
+        //view.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(profileImageView)
         view.addSubview(nameLabel)
         view.addSubview(linkLabel)
@@ -94,7 +95,7 @@ extension ProfileViewController{
             descriptionLabel.topAnchor.constraint(equalTo: linkLabel.bottomAnchor, constant: 8),
             descriptionLabel.leadingAnchor.constraint(equalTo: profileImageView.leadingAnchor),
             exitButton.centerYAnchor.constraint(equalTo: profileImageView.centerYAnchor),
-            exitButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
+            exitButton.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -20),
             
         ])
     }
