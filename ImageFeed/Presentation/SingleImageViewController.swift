@@ -10,13 +10,14 @@ import UIKit
 final class SingleImageViewController: UIViewController {
     
     //MARK: - Outlets
-    @IBOutlet var imageView: UIImageView!
+    @IBOutlet private var imageView: UIImageView!
     
-    @IBOutlet weak var scrollView: UIScrollView!
+    @IBOutlet private weak var scrollView: UIScrollView!
     //MARK: - Variables
-    var image: UIImage!{
+    var image: UIImage?{
         didSet {
             guard isViewLoaded else { return }
+            guard let image = image else {return}
             imageView.image = image
             rescaleAndCenterImageInScrollView(image: image)
         }
@@ -24,6 +25,7 @@ final class SingleImageViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        guard let image = image else {return}
         imageView.image = image
         scrollView.delegate = self
         scrollView.minimumZoomScale = 0.1
@@ -31,11 +33,12 @@ final class SingleImageViewController: UIViewController {
         rescaleAndCenterImageInScrollView(image: image)
     }
     
-    @IBAction func didTapBackButton(_ sender: Any) {
+    @IBAction private func didTapBackButton(_ sender: Any) {
         dismiss(animated: true, completion: nil)
     }
     
-    @IBAction func didTapShareButton(_ sender: UIButton) {
+    @IBAction private func didTapShareButton(_ sender: UIButton) {
+        guard let image = image else {return}
         let share = UIActivityViewController(
             activityItems: [image],
             applicationActivities: nil
@@ -66,4 +69,9 @@ extension SingleImageViewController:UIScrollViewDelegate{
         scrollView.setContentOffset(CGPoint(x: x, y: y), animated: false)
     }
 }
-
+//MARK: - Preferred Status Bar
+extension SingleImageViewController{
+    override var preferredStatusBarStyle: UIStatusBarStyle{
+        .lightContent
+    }
+}
