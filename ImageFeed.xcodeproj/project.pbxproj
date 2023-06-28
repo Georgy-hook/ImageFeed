@@ -12,6 +12,7 @@
 		66219D192A237C2B0065F7A6 /* ImagesListCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66219D182A237C2B0065F7A6 /* ImagesListCell.swift */; };
 		66219D1C2A23A4730065F7A6 /* DateFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66219D1B2A23A4730065F7A6 /* DateFormatter.swift */; };
 		66472D512A3742C700466F72 /* SingleImageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66472D502A3742C700466F72 /* SingleImageViewController.swift */; };
+		66C2ACFF2A4C7F4B00A42B5B /* Contacts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66C2ACFE2A4C7F4B00A42B5B /* Contacts.swift */; };
 		66E660522A20E24500EFD4C7 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66E660512A20E24500EFD4C7 /* AppDelegate.swift */; };
 		66E660542A20E24500EFD4C7 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66E660532A20E24500EFD4C7 /* SceneDelegate.swift */; };
 		66E660562A20E24500EFD4C7 /* ImagesListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66E660552A20E24500EFD4C7 /* ImagesListViewController.swift */; };
@@ -25,6 +26,7 @@
 		66219D182A237C2B0065F7A6 /* ImagesListCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagesListCell.swift; sourceTree = "<group>"; };
 		66219D1B2A23A4730065F7A6 /* DateFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateFormatter.swift; sourceTree = "<group>"; };
 		66472D502A3742C700466F72 /* SingleImageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SingleImageViewController.swift; sourceTree = "<group>"; };
+		66C2ACFE2A4C7F4B00A42B5B /* Contacts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Contacts.swift; sourceTree = "<group>"; };
 		66E6604E2A20E24500EFD4C7 /* ImageFeed.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ImageFeed.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		66E660512A20E24500EFD4C7 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		66E660532A20E24500EFD4C7 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -51,6 +53,7 @@
 				66E6605C2A20E24600EFD4C7 /* LaunchScreen.storyboard */,
 				66E6605F2A20E24600EFD4C7 /* Info.plist */,
 				66127CD02A361605002F0F44 /* Assets.xcassets */,
+				66C2ACFE2A4C7F4B00A42B5B /* Contacts.swift */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -182,6 +185,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				66C2ACFF2A4C7F4B00A42B5B /* Contacts.swift in Sources */,
 				66127CCF2A36147D002F0F44 /* ProfileViewController.swift in Sources */,
 				66E660562A20E24500EFD4C7 /* ImagesListViewController.swift in Sources */,
 				66219D192A237C2B0065F7A6 /* ImagesListCell.swift in Sources */,
