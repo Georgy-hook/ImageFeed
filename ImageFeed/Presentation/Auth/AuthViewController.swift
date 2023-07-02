@@ -25,7 +25,9 @@ extension AuthViewController: WebViewViewControllerDelegate{
     
     
     func webViewViewController(_ vc: WebViewViewController, didAuthenticateWithCode code: String) {
-        
+        OAuth2Service.shared.fetchOAuthToken(code){
+            
+        }
     }
     
     func webViewViewControllerDidCancel(_ vc: WebViewViewController) {
