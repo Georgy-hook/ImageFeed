@@ -14,6 +14,7 @@ final class WebViewViewController: UIViewController {
     @IBOutlet weak var progressView: UIProgressView!
     
     //MARK: - Varibles
+    fileprivate let UnsplashAuthorizeURLString = "https://unsplash.com/oauth/authorize"
     weak var delegate: WebViewViewControllerDelegate?
     private let ShowWebViewSegueIdentifier = "ShowWebView"
     
@@ -37,6 +38,7 @@ final class WebViewViewController: UIViewController {
     }
     
     override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
         webView.addObserver(
             self,
             forKeyPath: #keyPath(WKWebView.estimatedProgress),
@@ -44,6 +46,7 @@ final class WebViewViewController: UIViewController {
             context: nil)
     }
     override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
         
     }
     //MARK: - Actions
@@ -75,7 +78,7 @@ extension WebViewViewController: WKNavigationDelegate{
         decisionHandler: @escaping (WKNavigationActionPolicy) -> Void
     ) {
         if let code = code(from: navigationAction) {
-            //TODO: process code
+            delegate?.webViewViewController(self, didAuthenticateWithCode: code)
             decisionHandler(.cancel)
         } else {
             decisionHandler(.allow)

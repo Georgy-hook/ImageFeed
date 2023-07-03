@@ -11,13 +11,11 @@ class AuthViewController: UIViewController {
     
     //MARK: - Varibles
     private let ShowWebViewSegueIdentifier = "ShowWebView"
-    
+    var delegate: AuthViewControllerDelegate?
     override func viewDidLoad() {
         super.viewDidLoad()
         
     }
-    
-    
     
 }
 //MARK: - WebViewViewControllerDelegate
@@ -25,9 +23,7 @@ extension AuthViewController: WebViewViewControllerDelegate{
     
     
     func webViewViewController(_ vc: WebViewViewController, didAuthenticateWithCode code: String) {
-        OAuth2Service.shared.fetchOAuthToken(code){
-            
-        }
+        delegate?.authViewController(self, didAuthenticateWithCode: code)
     }
     
     func webViewViewControllerDidCancel(_ vc: WebViewViewController) {

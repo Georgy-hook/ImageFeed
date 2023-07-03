@@ -7,14 +7,15 @@
 
 import Foundation
 class OAuth2TokenStorage{
+    static let shared = OAuth2TokenStorage()
     private let userDefaults = UserDefaults.standard
     private enum Keys: String {
         case token
     }
-    var token: String{
+    var token: String?{
         get{
             guard let token = userDefaults.string(forKey: Keys.token.rawValue) else{
-                return "UserDefults error"
+                return nil
             }
             return token
         }
