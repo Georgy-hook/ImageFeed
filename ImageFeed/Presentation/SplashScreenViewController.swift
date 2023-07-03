@@ -7,7 +7,7 @@
 
 import UIKit
 
-class SplashScreenViewController: UIViewController {
+final class SplashScreenViewController: UIViewController {
     //MARK: - Varibles
     private let ShowAuthViewSegueIdentifier = "ShowAuthView"
     private let ShowImageListViewSegueIdentifier = "ShowImageListView"
