@@ -11,7 +11,7 @@ final class WebViewViewController: UIViewController {
     
     //MARK: - Outlets
     @IBOutlet private var webView: WKWebView!
-    @IBOutlet weak var progressView: UIProgressView!
+    @IBOutlet private var progressView: UIProgressView!
     
     //MARK: - Varibles
     fileprivate let UnsplashAuthorizeURLString = "https://unsplash.com/oauth/authorize"

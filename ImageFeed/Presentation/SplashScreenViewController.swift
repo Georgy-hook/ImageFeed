@@ -6,7 +6,7 @@
 //
 
 import UIKit
-
+import ProgressHUD
 final class SplashScreenViewController: UIViewController {
     //MARK: - Varibles
     private let ShowAuthViewSegueIdentifier = "ShowAuthView"
@@ -45,16 +45,11 @@ final class SplashScreenViewController: UIViewController {
 //MARK: - Segue
 extension SplashScreenViewController {
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Проверим, что переходим на авторизацию
         if segue.identifier == ShowAuthViewSegueIdentifier {
-            
-            // Доберёмся до первого контроллера в навигации. Мы помним, что в программировании отсчёт начинается с 0?
             guard
                 let navigationController = segue.destination as? UINavigationController,
                 let viewController = navigationController.viewControllers[0] as? AuthViewController
             else { fatalError("Failed to prepare for \(ShowAuthViewSegueIdentifier)") }
-            
-            // Установим делегатом контроллера наш SplashViewController
             viewController.delegate = self
         } else {
             super.prepare(for: segue, sender: sender)
@@ -65,6 +60,7 @@ extension SplashScreenViewController {
 //MARK: - AuthViewControllerDelegate
 extension SplashScreenViewController: AuthViewControllerDelegate {
     func authViewController(_ vc: AuthViewController, didAuthenticateWithCode code: String) {
+        ProgressHUD.show()
         dismiss(animated: true) { [weak self] in
             guard let self = self else { return }
             self.fetchOAuthToken(code)
@@ -78,8 +74,10 @@ extension SplashScreenViewController: AuthViewControllerDelegate {
             case .success(let token):
                 OAuth2TokenStorage.shared.token = token
                 self.switchToTabBarController()
+                ProgressHUD.dismiss()
             case .failure(let error):
                 print(error)
+                ProgressHUD.dismiss()
             }
         }
     }
