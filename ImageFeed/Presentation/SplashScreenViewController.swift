@@ -7,6 +7,7 @@
 
 import UIKit
 import ProgressHUD
+
 final class SplashScreenViewController: UIViewController {
     //MARK: - Varibles
     private let ShowAuthViewSegueIdentifier = "ShowAuthView"
@@ -60,7 +61,7 @@ extension SplashScreenViewController {
 //MARK: - AuthViewControllerDelegate
 extension SplashScreenViewController: AuthViewControllerDelegate {
     func authViewController(_ vc: AuthViewController, didAuthenticateWithCode code: String) {
-        ProgressHUD.show()
+        UIBlockingProgressHUD.show()
         dismiss(animated: true) { [weak self] in
             guard let self = self else { return }
             self.fetchOAuthToken(code)
@@ -74,10 +75,10 @@ extension SplashScreenViewController: AuthViewControllerDelegate {
             case .success(let token):
                 OAuth2TokenStorage.shared.token = token
                 self.switchToTabBarController()
-                ProgressHUD.dismiss()
+                UIBlockingProgressHUD.dismiss()
             case .failure(let error):
                 print(error)
-                ProgressHUD.dismiss()
+                UIBlockingProgressHUD.dismiss()
             }
         }
     }

@@ -13,6 +13,7 @@
 		66219D1C2A23A4730065F7A6 /* DateFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66219D1B2A23A4730065F7A6 /* DateFormatter.swift */; };
 		66472D512A3742C700466F72 /* SingleImageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66472D502A3742C700466F72 /* SingleImageViewController.swift */; };
 		6665DF492A584085007959FE /* ProgressHUD in Frameworks */ = {isa = PBXBuildFile; productRef = 6665DF482A584085007959FE /* ProgressHUD */; };
+		6665DF4B2A5873E2007959FE /* UIBlockingProgressHUD.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6665DF4A2A5873E2007959FE /* UIBlockingProgressHUD.swift */; };
 		66AE07FD2A4DD10800BA9F5C /* WebViewViewControllerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66AE07FC2A4DD10800BA9F5C /* WebViewViewControllerDelegate.swift */; };
 		66C2ACFF2A4C7F4B00A42B5B /* Contacts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66C2ACFE2A4C7F4B00A42B5B /* Contacts.swift */; };
 		66C2AD012A4C9D8100A42B5B /* AuthViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66C2AD002A4C9D8100A42B5B /* AuthViewController.swift */; };
@@ -36,6 +37,7 @@
 		66219D182A237C2B0065F7A6 /* ImagesListCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagesListCell.swift; sourceTree = "<group>"; };
 		66219D1B2A23A4730065F7A6 /* DateFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateFormatter.swift; sourceTree = "<group>"; };
 		66472D502A3742C700466F72 /* SingleImageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SingleImageViewController.swift; sourceTree = "<group>"; };
+		6665DF4A2A5873E2007959FE /* UIBlockingProgressHUD.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIBlockingProgressHUD.swift; sourceTree = "<group>"; };
 		66AE07FC2A4DD10800BA9F5C /* WebViewViewControllerDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebViewViewControllerDelegate.swift; sourceTree = "<group>"; };
 		66C2ACFE2A4C7F4B00A42B5B /* Contacts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Contacts.swift; sourceTree = "<group>"; };
 		66C2AD002A4C9D8100A42B5B /* AuthViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthViewController.swift; sourceTree = "<group>"; };
@@ -106,6 +108,7 @@
 			children = (
 				66219D1B2A23A4730065F7A6 /* DateFormatter.swift */,
 				66DBA1512A51C9B900534FF1 /* URlSession + URLRequest.swift */,
+				6665DF4A2A5873E2007959FE /* UIBlockingProgressHUD.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -261,6 +264,7 @@
 				66DBA1542A51D4C900534FF1 /* OAuth2TokenStorage.swift in Sources */,
 				66C2AD012A4C9D8100A42B5B /* AuthViewController.swift in Sources */,
 				66219D1C2A23A4730065F7A6 /* DateFormatter.swift in Sources */,
+				6665DF4B2A5873E2007959FE /* UIBlockingProgressHUD.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
