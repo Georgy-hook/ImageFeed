@@ -56,10 +56,16 @@ final class ProfileViewController: UIViewController {
         return button
     }()
     
+    private let profileService = ProfileService.shared
+    private var profileImageServiceObserver: NSObjectProtocol?
+    private let profileImageService = ProfileImageService.shared
     override func viewDidLoad() {
         super.viewDidLoad()
         addSubviews()
         applyConstraints()
+        addObserver()
+        guard let personProfile = profileService.profile else{return}
+        updateProfileDetails(profile: personProfile)
     }
     
     @objc
@@ -109,5 +115,36 @@ extension ProfileViewController{
 extension ProfileViewController{
     override var preferredStatusBarStyle: UIStatusBarStyle{
         .lightContent
+    }
+}
+
+//MARK: - Profile information fill
+extension ProfileViewController{
+    func updateProfileDetails(profile: Profile){
+        nameLabel.text = profile.name
+        linkLabel.text = profile.loginName
+        descriptionLabel.text = profile.bio
+    }
+}
+
+//MARK: - Notification center new API
+extension ProfileViewController{
+    private func addObserver(){
+        profileImageServiceObserver = NotificationCenter.default 
+            .addObserver(
+                forName: ProfileImageService.DidChangeNotification,
+                object: nil,
+                queue: .main
+            ) { [weak self] _ in
+                guard let self = self else { return }
+                self.updateAvatar()
+            }
+        updateAvatar()
+    }
+    private func updateAvatar(){
+        guard
+            let profileImageURL = profileImageService.avatarURL,
+            let url = URL(string: profileImageURL)
+        else { return }
     }
 }
