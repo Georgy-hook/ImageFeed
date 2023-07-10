@@ -14,7 +14,7 @@ final class SplashScreenViewController: UIViewController {
     private let ShowImageListViewSegueIdentifier = "ShowImageListView"
     private let profileService = ProfileService.shared
     private let profileImageService = ProfileImageService.shared
-    
+    private let errorAlertService = ErrorAlertService.shared
     //MARK: - Life cycle
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -83,7 +83,7 @@ extension SplashScreenViewController: AuthViewControllerDelegate {
             case .failure(let error):
                 UIBlockingProgressHUD.dismiss()
                 print(error)
-                // TODO [Sprint 11] Показать ошибку
+                errorAlertService.showAlert(on: self, with: .networkError)
                 break
             }
         }
@@ -99,7 +99,7 @@ extension SplashScreenViewController: AuthViewControllerDelegate {
                 self.switchToTabBarController()
             case .failure:
                 UIBlockingProgressHUD.dismiss()
-                // TODO [Sprint 11] Показать ошибку
+                errorAlertService.showAlert(on: self, with: .networkError)
                 break
             }
         }

@@ -28,7 +28,8 @@ final class ProfileImageService{
         task?.cancel()
         lastToken = token
         let request = profileImageURLRequest(username: username, authToken: token)
-        let task = object(for: request) { [weak self] result in
+        let session = URLSession.shared
+        let task = session.objectTask(for: request) { [weak self] (result: Result<UserResult, Error>) in
             guard let self = self else { return }
             switch result {
             case .success(let body):
@@ -51,18 +52,6 @@ extension ProfileImageService{
         var request = URLRequest.makeHTTPRequest(path: "/users/\(username)", httpMethod: "GET")
         request.setValue("Bearer \(authToken)", forHTTPHeaderField: "Authorization")
         return request
-    }
-    private func object(
-        for request: URLRequest,
-        completion: @escaping (Result<UserResult, Error>) -> Void
-    ) -> URLSessionTask {
-        let decoder = JSONDecoder()
-        return urlSession.data(for: request) { (result: Result<Data, Error>) in
-            let response = result.flatMap { data -> Result<UserResult, Error> in
-                Result { try decoder.decode(UserResult.self, from: data) }
-            }
-            completion(response)
-        }
     }
 }
 

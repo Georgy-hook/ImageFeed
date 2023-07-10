@@ -17,6 +17,7 @@ final class WebViewViewController: UIViewController {
     fileprivate let UnsplashAuthorizeURLString = "https://unsplash.com/oauth/authorize"
     weak var delegate: WebViewViewControllerDelegate?
     private let ShowWebViewSegueIdentifier = "ShowWebView"
+    private var estimatedProgressObservation: NSKeyValueObservation?
     
     //MARK: - Life cycle
     override func viewDidLoad() {
@@ -39,15 +40,13 @@ final class WebViewViewController: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        webView.addObserver(
-            self,
-            forKeyPath: #keyPath(WKWebView.estimatedProgress),
-            options: .new,
-            context: nil)
-    }
-    override func viewDidDisappear(_ animated: Bool) {
-        super.viewDidDisappear(animated)
-        
+        estimatedProgressObservation = webView.observe(
+            \.estimatedProgress,
+             options: [],
+             changeHandler: { [weak self] _, _ in
+                 guard let self = self else { return }
+                 self.updateProgress()
+             })
     }
     //MARK: - Actions
     @IBAction private func didTapBackButton(_ sender: Any) {
@@ -85,21 +84,8 @@ extension WebViewViewController: WKNavigationDelegate{
         }
     }
 }
-//MARK: -
+//MARK: - New KVO API
 extension WebViewViewController{
-    override func observeValue(
-        forKeyPath keyPath: String?,
-        of object: Any?,
-        change: [NSKeyValueChangeKey : Any]?,
-        context: UnsafeMutableRawPointer?
-    ) {
-        if keyPath == #keyPath(WKWebView.estimatedProgress) {
-            updateProgress()
-        } else {
-            super.observeValue(forKeyPath: keyPath, of: object, change: change, context: context)
-        }
-    }
-
     private func updateProgress() {
         progressView.progress = Float(webView.estimatedProgress)
         progressView.isHidden = fabs(webView.estimatedProgress - 1.0) <= 0.0001

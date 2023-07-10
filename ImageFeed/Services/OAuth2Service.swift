@@ -32,7 +32,8 @@ final class OAuth2Service {
         task?.cancel()
         lastCode = code
         let request = authTokenRequest(code: code)
-        let task = object(for: request) { [weak self] result in
+        let session = URLSession.shared
+        let task = session.objectTask(for: request) { [weak self] (result: Result<OAuthToken, Error>) in
             guard let self = self else { return }
             switch result {
             case .success(let body):
@@ -49,19 +50,8 @@ final class OAuth2Service {
         task.resume()
     }
 }
+    
 extension OAuth2Service {
-    private func object(
-        for request: URLRequest,
-        completion: @escaping (Result<OAuthToken, Error>) -> Void
-    ) -> URLSessionTask {
-        let decoder = JSONDecoder()
-        return urlSession.data(for: request) { (result: Result<Data, Error>) in
-            let response = result.flatMap { data -> Result<OAuthToken, Error> in
-                Result { try decoder.decode(OAuthToken.self, from: data) }
-            }
-            completion(response)
-        }
-    }
     private func authTokenRequest(code: String) -> URLRequest {
         URLRequest.makeHTTPRequest(
             path: "/oauth/token"
