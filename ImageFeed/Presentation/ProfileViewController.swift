@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import Kingfisher
 
 final class ProfileViewController: UIViewController {
     
@@ -146,5 +147,10 @@ extension ProfileViewController{
             let profileImageURL = profileImageService.avatarURL,
             let url = URL(string: profileImageURL)
         else { return }
+        let processor = RoundCornerImageProcessor(cornerRadius: 20)
+        profileImageView.kf.indicatorType = .activity
+        profileImageView.kf.setImage(with: url,
+                              placeholder: UIImage(named: "Placeholder"),
+                              options: [.processor(processor)])
     }
 }
