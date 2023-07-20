@@ -37,12 +37,11 @@ final class ImagesListViewController: UIViewController {
 extension ImagesListViewController:UITableViewDataSource{
     
     func configCell(for cell: ImagesListCell, with indexPath: IndexPath) {
-        cell.imageCell.image = UIImage(named: "\(indexPath.row)")
-        cell.dateLabel.text = Date().dateString
+        cell.configure(with: indexPath)
         if indexPath.row  % 2 != 0{
-            cell.likeButton.setImage(UIImage(named: "Active"), for: .normal)
+            cell.switchLikeButtonState(to: .active)
         }else{
-            cell.likeButton.setImage(UIImage(named: "No Active"), for: .normal)
+            cell.switchLikeButtonState(to: .inactive)
         }
     }
     

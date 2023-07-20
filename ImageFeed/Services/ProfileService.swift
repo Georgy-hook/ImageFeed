@@ -17,8 +17,7 @@ final class ProfileService{
     private(set) var profile: Profile?
     
     func fetchProfile(_ token: String, completion: @escaping (Result<Profile, Error>) -> Void){
-        assert(Thread.isMainThread)
-        if lastToken == token { return }
+        guard lastToken != token else { return }
         task?.cancel()
         lastToken = token
         let request = selfProfileRequest(authToken: token)
@@ -28,7 +27,7 @@ final class ProfileService{
             switch result {
             case .success(let body):
                 let personProfile = Profile(username: body.username,
-                                            name: "\(body.firstName) \(body.lastName)",
+                                            name: "\(body.firstName) \(body.lastName ?? "")",
                                             loginName: "@\(body.username)",
                                             bio: body.bio ?? "")
                 self.profile = personProfile

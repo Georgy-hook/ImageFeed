@@ -11,7 +11,7 @@ import Kingfisher
 final class ProfileViewController: UIViewController {
     
     //MARK: - Profile ImageView
-    let profileImageView: UIImageView = {
+    private let profileImageView: UIImageView = {
         let imageView = UIImageView()
         let profileImage = UIImage(named: "Photo")
         imageView.image = profileImage
@@ -20,7 +20,7 @@ final class ProfileViewController: UIViewController {
     }()
     
     //MARK: - Name Label
-    let nameLabel: UILabel = {
+   private let nameLabel: UILabel = {
         let label = UILabel()
         label.text = "Екатерина Новикова"
         label.font = UIFont.systemFont(ofSize: 23)
@@ -29,7 +29,7 @@ final class ProfileViewController: UIViewController {
     }()
     
     //MARK: - Link Label
-    let linkLabel: UILabel = {
+    private let linkLabel: UILabel = {
         let label = UILabel()
         label.text = "@ekaterina_nov"
         label.font = UIFont.systemFont(ofSize: 13)
@@ -38,7 +38,7 @@ final class ProfileViewController: UIViewController {
     }()
     
     //MARK: - Description Label
-    let descriptionLabel: UILabel = {
+   private let descriptionLabel: UILabel = {
         let label = UILabel()
         label.text = "Hello world"
         label.font = UIFont.systemFont(ofSize: 13)
@@ -47,10 +47,10 @@ final class ProfileViewController: UIViewController {
     }()
     
     //MARK: - Exit Button
-    let exitButton: UIButton = {
+    private let exitButton: UIButton = {
         let button = UIButton.systemButton(
             with: UIImage(systemName: "ipad.and.arrow.forward")!,
-            target: ProfileViewController.self,
+            target: self,
             action: #selector(Self.didTapButton)
         )
         button.tintColor = UIColor(named: "YP Red")
@@ -71,7 +71,7 @@ final class ProfileViewController: UIViewController {
     
     @objc
     private func didTapButton() {
-        
+        print("exit")
     }
 }
 

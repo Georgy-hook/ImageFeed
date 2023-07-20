@@ -6,11 +6,10 @@
 //
 
 import UIKit
-import ProgressHUD
 
 final class SplashScreenViewController: UIViewController {
     //MARK: - SplashScreen ImageView
-    let splashScreenImageView:UIImageView = {
+    private let splashScreenImageView:UIImageView = {
         let imageView = UIImageView()
         imageView.image = UIImage(named: "Vector")
         return imageView
@@ -100,7 +99,7 @@ extension SplashScreenViewController: AuthViewControllerDelegate {
             case .failure(let error):
                 UIBlockingProgressHUD.dismiss()
                 print(error)
-                errorAlertService.showAlert(on: self, with: .networkError)
+                self.errorAlertService.showAlert(on: self, with: .networkError)
                 break
             }
         }
@@ -116,14 +115,13 @@ extension SplashScreenViewController: AuthViewControllerDelegate {
                 self.switchToTabBarController()
             case .failure:
                 UIBlockingProgressHUD.dismiss()
-                errorAlertService.showAlert(on: self, with: .networkError)
+                self.errorAlertService.showAlert(on: self, with: .networkError)
                 break
             }
         }
     }
     private func fetchProfileImageURL(username: String, token: String){
-        profileImageService.fetchProfileImageURL(username: username , token){ [weak self] result in
-            //      guard let self = self else { return }
+        profileImageService.fetchProfileImageURL(username: username , token){result in
             switch result {
             case .success(let url):
                 print(url)

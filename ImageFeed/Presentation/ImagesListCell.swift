@@ -12,8 +12,12 @@ class ImagesListCell: UITableViewCell {
     //MARK: - Variables
     static let reuseIdentifier = "ImagesListCell"
 
+    enum likeButtonState{
+        case active
+        case inactive
+    }
     //MARK: - UI Elements
-    let imageCell: UIImageView = {
+   private let imageCell: UIImageView = {
         let imageView = UIImageView()
         imageView.translatesAutoresizingMaskIntoConstraints = false
         imageView.layer.cornerRadius = 16
@@ -21,14 +25,14 @@ class ImagesListCell: UITableViewCell {
         return imageView
     }()
 
-    let likeButton: UIButton = {
+   private let likeButton: UIButton = {
         let button = UIButton()
         button.translatesAutoresizingMaskIntoConstraints = false
         button.setTitle("", for: .normal)
         return button
     }()
 
-    let dateLabel: UILabel = {
+   private let dateLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.textColor = .white
@@ -36,7 +40,7 @@ class ImagesListCell: UITableViewCell {
         return label
     }()
 
-    let gradientView: UIView = {
+    private let gradientView: UIView = {
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
@@ -98,5 +102,19 @@ extension ImagesListCell{
             gradientView.leadingAnchor.constraint(equalTo: imageCell.leadingAnchor),
             gradientView.heightAnchor.constraint(equalToConstant: 30)
         ])
+    }
+}
+extension ImagesListCell{
+    func switchLikeButtonState(to state: likeButtonState){
+        switch state{
+        case .active:
+            likeButton.setImage(UIImage(named: "Active"), for: .normal)
+        case .inactive:
+            likeButton.setImage(UIImage(named: "No Active"), for: .normal)
+        }
+    }
+    func configure(with indexPath:IndexPath){
+        imageCell.image = UIImage(named: "\(indexPath.row)")
+        dateLabel.text = Date().dateString
     }
 }

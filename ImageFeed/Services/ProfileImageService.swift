@@ -6,7 +6,6 @@
 //
 
 import UIKit
-import Kingfisher
 
 final class ProfileImageService{
     static let shared = ProfileImageService()
@@ -24,8 +23,7 @@ final class ProfileImageService{
                 object: self,
                 userInfo: ["URL": avatarURL])
         
-        assert(Thread.isMainThread)
-        if lastToken == token { return }
+        guard lastToken != token else { return }
         task?.cancel()
         lastToken = token
         let request = profileImageURLRequest(username: username, authToken: token)
@@ -53,9 +51,6 @@ extension ProfileImageService{
         var request = URLRequest.makeHTTPRequest(path: "/users/\(username)", httpMethod: "GET")
         request.setValue("Bearer \(authToken)", forHTTPHeaderField: "Authorization")
         return request
-    }
-    private func loadImage(with URL:String){
-        
     }
 }
 
