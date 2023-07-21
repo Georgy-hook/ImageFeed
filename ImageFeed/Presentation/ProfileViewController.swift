@@ -6,11 +6,12 @@
 //
 
 import UIKit
+import Kingfisher
 
 final class ProfileViewController: UIViewController {
     
     //MARK: - Profile ImageView
-    let profileImageView: UIImageView = {
+    private let profileImageView: UIImageView = {
         let imageView = UIImageView()
         let profileImage = UIImage(named: "Photo")
         imageView.image = profileImage
@@ -19,7 +20,7 @@ final class ProfileViewController: UIViewController {
     }()
     
     //MARK: - Name Label
-    let nameLabel: UILabel = {
+   private let nameLabel: UILabel = {
         let label = UILabel()
         label.text = "Екатерина Новикова"
         label.font = UIFont.systemFont(ofSize: 23)
@@ -28,7 +29,7 @@ final class ProfileViewController: UIViewController {
     }()
     
     //MARK: - Link Label
-    let linkLabel: UILabel = {
+    private let linkLabel: UILabel = {
         let label = UILabel()
         label.text = "@ekaterina_nov"
         label.font = UIFont.systemFont(ofSize: 13)
@@ -37,7 +38,7 @@ final class ProfileViewController: UIViewController {
     }()
     
     //MARK: - Description Label
-    let descriptionLabel: UILabel = {
+   private let descriptionLabel: UILabel = {
         let label = UILabel()
         label.text = "Hello world"
         label.font = UIFont.systemFont(ofSize: 13)
@@ -46,25 +47,31 @@ final class ProfileViewController: UIViewController {
     }()
     
     //MARK: - Exit Button
-    let exitButton: UIButton = {
+    private let exitButton: UIButton = {
         let button = UIButton.systemButton(
             with: UIImage(systemName: "ipad.and.arrow.forward")!,
-            target: ProfileViewController.self,
+            target: self,
             action: #selector(Self.didTapButton)
         )
         button.tintColor = UIColor(named: "YP Red")
         return button
     }()
     
+    private let profileService = ProfileService.shared
+    private var profileImageServiceObserver: NSObjectProtocol?
+    private let profileImageService = ProfileImageService.shared
     override func viewDidLoad() {
         super.viewDidLoad()
         addSubviews()
         applyConstraints()
+        addObserver()
+        guard let personProfile = profileService.profile else{return}
+        updateProfileDetails(profile: personProfile)
     }
     
     @objc
     private func didTapButton() {
-        
+        print("exit")
     }
 }
 
@@ -109,5 +116,41 @@ extension ProfileViewController{
 extension ProfileViewController{
     override var preferredStatusBarStyle: UIStatusBarStyle{
         .lightContent
+    }
+}
+
+//MARK: - Profile information fill
+extension ProfileViewController{
+    func updateProfileDetails(profile: Profile){
+        nameLabel.text = profile.name
+        linkLabel.text = profile.loginName
+        descriptionLabel.text = profile.bio
+    }
+}
+
+//MARK: - Notification center new API
+extension ProfileViewController{
+    private func addObserver(){
+        profileImageServiceObserver = NotificationCenter.default 
+            .addObserver(
+                forName: ProfileImageService.DidChangeNotification,
+                object: nil,
+                queue: .main
+            ) { [weak self] _ in
+                guard let self = self else { return }
+                self.updateAvatar()
+            }
+        updateAvatar()
+    }
+    private func updateAvatar(){
+        guard
+            let profileImageURL = profileImageService.avatarURL,
+            let url = URL(string: profileImageURL)
+        else { return }
+        let processor = RoundCornerImageProcessor(cornerRadius: 20)
+        profileImageView.kf.indicatorType = .activity
+        profileImageView.kf.setImage(with: url,
+                              placeholder: UIImage(named: "Placeholder"),
+                              options: [.processor(processor)])
     }
 }

@@ -6,21 +6,25 @@
 //
 
 import Foundation
-class OAuth2TokenStorage{
+import SwiftKeychainWrapper
+final class OAuth2TokenStorage{
     static let shared = OAuth2TokenStorage()
+    private init() {}
+    private let keyChain = KeychainWrapper.standard
     private let userDefaults = UserDefaults.standard
     private enum Keys: String {
         case token
     }
     var token: String?{
         get{
-            guard let token = userDefaults.string(forKey: Keys.token.rawValue) else{
+            guard let token = keyChain.string(forKey:Keys.token.rawValue ) else{
                 return nil
             }
             return token
         }
         set{
-            userDefaults.set(newValue, forKey: Keys.token.rawValue)
+            guard let newValue = newValue else {return}
+            keyChain.set(newValue, forKey: Keys.token.rawValue)
         }
     }
 }

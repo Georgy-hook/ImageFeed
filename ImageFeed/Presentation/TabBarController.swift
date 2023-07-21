@@ -1,0 +1,33 @@
+//
+//  TabBarController.swift
+//  ImageFeed
+//
+//  Created by Georgy on 13.07.2023.
+//
+
+import Foundation
+import UIKit
+ 
+final class TabBarController: UITabBarController {
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        self.tabBar.isTranslucent = false
+        self.tabBar.barTintColor = UIColor(named: "YP Black")
+        self.tabBar.tintColor = UIColor(named: "YP White")
+        self.tabBar.unselectedItemTintColor = UIColor(named: "YP White")
+        let imagesListViewController = ImagesListViewController()
+        imagesListViewController.tabBarItem = UITabBarItem(
+            title: nil,
+            image: UIImage(named: "tab_editorial_active"),
+            selectedImage: nil
+        )
+            let profileViewController = ProfileViewController()
+            profileViewController.tabBarItem = UITabBarItem(
+            title: nil,
+            image: UIImage(named: "tab_profile_active"),
+            selectedImage: nil
+        )
+        
+        self.viewControllers = [imagesListViewController, profileViewController]
+    }
+}
