@@ -46,6 +46,7 @@ extension URLSession {
                         let result = try decoder.decode(T.self, from: data)
                         fulfillCompletionOnMainThread(.success(result))
                     } catch {
+                        print(error)
                         fulfillCompletionOnMainThread(.failure(NetworkError.urlSessionError))
                     }
                 } else {

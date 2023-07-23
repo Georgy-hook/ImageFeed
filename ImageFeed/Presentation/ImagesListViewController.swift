@@ -20,6 +20,7 @@ final class ImagesListViewController: UIViewController {
     //MARK: - Variables
     private let photosName: [String] = Array(0..<20).map{ "\($0)" }
     private let ShowSingleImageSegueIdentifier = "ShowSingleImage"
+    private let imagesListService = ImagesListService.shared
     
     //MARK: - Life cycle
     override func viewDidLoad() {
@@ -84,6 +85,10 @@ extension ImagesListViewController:UITableViewDelegate{
         singleImageViewController.image = image
         singleImageViewController.modalPresentationStyle = .fullScreen
         present(singleImageViewController, animated: true)
+    }
+    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        imagesListService.fetchPhotosNextPage(OAuth2TokenStorage.shared.token!)
+        print(imagesListService.photos)
     }
 }
 //MARK: - Layout
