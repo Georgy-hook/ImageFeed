@@ -7,6 +7,7 @@
 
 import UIKit
 import Kingfisher
+import WebKit
 
 final class ProfileViewController: UIViewController {
     
@@ -60,6 +61,7 @@ final class ProfileViewController: UIViewController {
     private let profileService = ProfileService.shared
     private var profileImageServiceObserver: NSObjectProtocol?
     private let profileImageService = ProfileImageService.shared
+    private let oAuth2TokenStorage = OAuth2TokenStorage.shared
     override func viewDidLoad() {
         super.viewDidLoad()
         addSubviews()
@@ -71,7 +73,9 @@ final class ProfileViewController: UIViewController {
     
     @objc
     private func didTapButton() {
-        print("exit")
+        ProfileViewController.clean()
+        oAuth2TokenStorage.token = nil
+        switchToAuthViewController()
     }
 }
 
@@ -152,5 +156,25 @@ extension ProfileViewController{
         profileImageView.kf.setImage(with: url,
                               placeholder: UIImage(named: "Placeholder"),
                               options: [.processor(processor)])
+    }
+}
+
+//MARK: - Exit methods
+extension ProfileViewController{
+    private func switchToAuthViewController(){
+        let splashScreenViewController = SplashScreenViewController()
+        splashScreenViewController.modalPresentationStyle = .fullScreen
+        present(splashScreenViewController, animated: true)
+    }
+    static func clean() {
+       // Очищаем все куки из хранилища.
+       HTTPCookieStorage.shared.removeCookies(since: Date.distantPast)
+       // Запрашиваем все данные из локального хранилища.
+       WKWebsiteDataStore.default().fetchDataRecords(ofTypes: WKWebsiteDataStore.allWebsiteDataTypes()) { records in
+          // Массив полученных записей удаляем из хранилища.
+          records.forEach { record in
+             WKWebsiteDataStore.default().removeData(ofTypes: record.dataTypes, for: [record], completionHandler: {})
+          }
+       }
     }
 }

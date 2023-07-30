@@ -15,8 +15,6 @@ final class SplashScreenViewController: UIViewController {
         return imageView
     }()
     //MARK: - Varibles
-    private let ShowAuthViewSegueIdentifier = "ShowAuthView"
-    private let ShowImageListViewSegueIdentifier = "ShowImageListView"
     private let profileService = ProfileService.shared
     private let profileImageService = ProfileImageService.shared
     private let errorAlertService = ErrorAlertService.shared
@@ -48,7 +46,7 @@ final class SplashScreenViewController: UIViewController {
         .lightContent
     }
     
-
+    
 }
 //MARK: - Layout
 private extension SplashScreenViewController{
@@ -124,7 +122,7 @@ extension SplashScreenViewController: AuthViewControllerDelegate {
         profileImageService.fetchProfileImageURL(username: username , token){result in
             switch result {
             case .success(let url):
-                print(url)
+                return
             case .failure(let error):
                 print(error)
             }

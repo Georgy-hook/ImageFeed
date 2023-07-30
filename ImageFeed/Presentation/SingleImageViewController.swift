@@ -6,7 +6,7 @@
 //
 
 import UIKit
-
+import Kingfisher
 final class SingleImageViewController: UIViewController {
     
     // MARK: - Views
@@ -42,23 +42,32 @@ final class SingleImageViewController: UIViewController {
     }()
     
     // MARK: - Variables
-    var image: UIImage? {
+    var imageURL: String? {
         didSet {
             guard isViewLoaded else { return }
-            guard let image = image else { return }
-            imageView.image = image
-            rescaleAndCenterImageInScrollView(image: image)
+            guard let url = URL(string: imageURL!) else { return }
+            
+            imageView.kf.indicatorType = .activity
+            imageView.kf.setImage(with: url,
+                                  completionHandler: {_ in
+                self.rescaleAndCenterImageInScrollView(image: self.imageView.image!)
+            })
         }
     }
     
+    private let errorAlertService = ErrorAlertService.shared
     // MARK: - Life cycle
     override func viewDidLoad() {
         super.viewDidLoad()
         addSubviews()
         applyConstraints()
-        guard let image = image else { return }
-        imageView.image = image
-        rescaleAndCenterImageInScrollView(image: image)
+        guard let url = URL(string: imageURL!) else { return }
+        
+        imageView.kf.indicatorType = .activity
+        imageView.kf.setImage(with: url,
+                              completionHandler: {_ in
+            self.rescaleAndCenterImageInScrollView(image: self.imageView.image!)
+        })
     }
     
     // MARK: - Button actions
@@ -67,7 +76,7 @@ final class SingleImageViewController: UIViewController {
     }
     
     @objc private func didTapShareButton(_ sender: UIButton) {
-        guard let image = image else { return }
+        guard let image = imageView.image else { return }
         let share = UIActivityViewController(activityItems: [image], applicationActivities: nil)
         present(share, animated: true, completion: nil)
     }
@@ -132,5 +141,33 @@ extension SingleImageViewController: UIScrollViewDelegate {
 extension SingleImageViewController {
     override var preferredStatusBarStyle: UIStatusBarStyle {
         .lightContent
+    }
+}
+
+//MARK: - Download image
+private extension SingleImageViewController{
+    func downloadImage(from urlString: String?, to imageView:UIImageView){
+        guard let urlString = urlString else {return}
+        guard let url = URL(string: urlString) else {return}
+        UIBlockingProgressHUD.show()
+        imageView.kf.indicatorType = .activity
+        imageView.kf.setImage(with: url,
+                              completionHandler: {[weak self] result in
+            UIBlockingProgressHUD.dismiss()
+            guard let self = self else { return }
+            switch result {
+            case .success(let imageResult):
+                self.rescaleAndCenterImageInScrollView(image: imageResult.image)
+            case .failure:
+                self.showError()
+            }
+        })
+    }
+    
+    func showError() {
+        ErrorAlertService.shared.showErrorAlert(on: self) { [weak self] in
+            guard let self = self else { return }
+            self.downloadImage(from: self.imageURL, to: self.imageView)
+        }
     }
 }

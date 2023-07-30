@@ -8,7 +8,7 @@
 import UIKit
 private var dateFormatter: DateFormatter = {
     let formatter = DateFormatter()
-    formatter.dateStyle = .long
+    formatter.dateStyle = .medium
     formatter.timeStyle = .none
     return formatter
 }()

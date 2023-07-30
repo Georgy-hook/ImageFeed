@@ -29,4 +29,18 @@ final class ErrorAlertService {
         alert.addAction(okAction)
         viewController.present(alert, animated: true, completion: nil)
     }
+    
+    func showErrorAlert(on viewController: UIViewController, retryHandler: @escaping () -> Void) {
+         let alert = UIAlertController(title: "Что-то пошло не так", message: "Попробовать ещё раз?", preferredStyle: .alert)
+
+         let repeatAction = UIAlertAction(title: "Повторить", style: .default) { _ in
+             retryHandler()
+         }
+         let cancelAction = UIAlertAction(title: "Не надо", style: .cancel, handler: nil)
+
+         alert.addAction(repeatAction)
+         alert.addAction(cancelAction)
+         
+         viewController.present(alert, animated: true, completion: nil)
+     }
 }
