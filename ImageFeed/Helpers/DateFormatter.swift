@@ -6,21 +6,31 @@
 //
 
 import UIKit
-private var dateFormatter: DateFormatter = {
-    let formatter = DateFormatter()
-    formatter.dateStyle = .medium
-    formatter.timeStyle = .none
-    return formatter
-}()
-extension Date {
-    var dateString: String { dateFormatter.string(from: self) }
-}
-extension String{
-    func getDate() -> Date? {
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss"
-        dateFormatter.timeZone = TimeZone.current
-        dateFormatter.locale = Locale.current
-        return dateFormatter.date(from: self)
+class AppDateFormatter {
+    static let shared = AppDateFormatter()
+    
+    private init() {}
+    
+    private lazy var dateFormatterToString: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "dd MMMM yyyy"
+        formatter.locale = Locale(identifier: "ru_RU")
+        return formatter
+    }()
+    
+    private lazy var dateFormatterFromJSON: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZ"
+        formatter.locale = Locale(identifier: "en_US_POSIX")
+        return formatter
+    }()
+    
+    func dateToString(with date:Date?) -> String{
+        guard let date = date else {return ""}
+        return dateFormatterToString.string(from: date)
+    }
+    
+    func stringToDate(with string:String) -> Date?{
+        return dateFormatterFromJSON.date(from: string)
     }
 }

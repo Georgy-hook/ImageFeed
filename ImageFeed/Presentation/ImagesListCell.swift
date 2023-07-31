@@ -13,6 +13,9 @@ class ImagesListCell: UITableViewCell {
     //MARK: - Variables
     static let reuseIdentifier = "ImagesListCell"
     weak var delegate: ImagesListCellDelegate?
+    
+    private let dateFormatter = AppDateFormatter.shared
+    
     //MARK: - UI Elements
     private var imageCell: UIImageView = {
         let imageView = UIImageView()
@@ -133,7 +136,7 @@ extension ImagesListCell{
                               })
         likeButton.setImage(photo.isLiked ? UIImage(named: "Active"):UIImage(named: "No Active"),
                             for: .normal)
-        dateLabel.text = photo.createdAt?.dateString
+        dateLabel.text = dateFormatter.dateToString(with: photo.createdAt)
     }
 
     

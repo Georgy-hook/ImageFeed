@@ -14,11 +14,13 @@ final class ImagesListService {
     private let urlSession = URLSession.shared
     private var task: URLSessionTask?
     
+    private let dateFormatter = AppDateFormatter.shared
+    
     private (set) var photos: [Photo] = []
     
-    private var lastLoadedPage: Int?
+    private var lastLoadedPage: Int = 1
     
-    static let DidChangeNotification = Notification.Name(rawValue: "ImagesListProviderDidChange")
+    static let didChangeNotification = Notification.Name(rawValue: "ImagesListProviderDidChange")
     
     private var isFetchingPhotos = false
     
@@ -27,9 +29,7 @@ final class ImagesListService {
         guard !isFetchingPhotos else { return }
         isFetchingPhotos = true
         
-        let nextPage = lastLoadedPage == nil
-        ? 1
-        : lastLoadedPage! + 1
+        let nextPage = lastLoadedPage + 1
         self.lastLoadedPage = nextPage
         task?.cancel()
         let request = ImagesListURLRequest(authToken: token, page: nextPage, perPage: 10)
@@ -40,11 +40,13 @@ final class ImagesListService {
             switch result {
             case .success(let body):
                 body.forEach{ element in
+                    print(element.createdAt)
                     self.photos.append(self.convertToPhoto(element: element))
+                    print(self.photos[0].createdAt)
                 }
                 NotificationCenter.default
                     .post(
-                        name: ImagesListService.DidChangeNotification,
+                        name: ImagesListService.didChangeNotification,
                         object: self,
                         userInfo: ["photoList": photos])
                 
@@ -60,14 +62,19 @@ final class ImagesListService {
     
     func changeLike(photoId: String, isLike: Bool, _ completion: @escaping (Result<Void, Error>) -> Void){
         let request: URLRequest?
+        guard let token = OAuth2TokenStorage.shared.token else {return}
+        
         if isLike {
-            request = ImagesDeleteLikeURLRequest(authToken: OAuth2TokenStorage.shared.token!, id: photoId)
+            request = ImagesDeleteLikeURLRequest(authToken: token, id: photoId)
         }
         else {
-            request = ImagesLikeURLRequest(authToken: OAuth2TokenStorage.shared.token!, id: photoId)
+            request = ImagesLikeURLRequest(authToken: token, id: photoId)
         }
+        
+        guard let request = request else {return}
+        
         let session = URLSession.shared
-        let task = session.dataTask(with: request!) {[weak self] data, response, error in
+        let task = session.dataTask(with: request) {[weak self] data, response, error in
             guard let self = self else { return }            
             if let error = error {
                 print("Error with like request:\(error)")
@@ -81,9 +88,9 @@ final class ImagesListService {
                 DispatchQueue.main.async {
                     // Поиск индекса элемента
                     if let index = self.photos.firstIndex(where: { $0.id == photoId }) {
-                        // Текущий элемент
+                        
                         let photo = self.photos[index]
-                        // Копия элемента с инвертированным значением isLiked.
+                        
                         let newPhoto = Photo(
                             id: photo.id,
                             size: photo.size,
@@ -93,10 +100,10 @@ final class ImagesListService {
                             largeImageURL: photo.largeImageURL,
                             isLiked: !photo.isLiked
                         )
-                        // Заменяем элемент в массиве.
+                        
                         self.photos[index] = newPhoto
                     }
-                    completion(.success(()))  // Здесь мы вызываем completion с успехом
+                    completion(.success(()))
                 }
             } else {
                 DispatchQueue.main.async {
@@ -128,10 +135,15 @@ extension ImagesListService{
     private func convertToPhoto(element: PhotoResultElement) -> Photo{
         return Photo(id: element.id,
                      size: CGSize(width: element.width, height: element.height),
-                     createdAt: element.createdAt.getDate(),
+                     createdAt: dateFormatter.stringToDate(with: element.createdAt) ,
                      welcomeDescription: element.description,
                      thumbImageURL: element.urls.thumb,
                      largeImageURL: element.urls.full,
                      isLiked: element.likedByUser)
+    }
+}
+extension ImagesListService{
+    func cleanPhotos(){
+        photos = []
     }
 }

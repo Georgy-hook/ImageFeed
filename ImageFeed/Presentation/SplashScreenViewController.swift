@@ -27,6 +27,9 @@ final class SplashScreenViewController: UIViewController {
     }
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+        
+        guard UIBlockingProgressHUD.isShowing == false else { return }
+        
         if let token = OAuth2TokenStorage.shared.token{
             fetchProfile(token: token)
             if let profileUsername = profileService.profile?.username {
@@ -97,7 +100,9 @@ extension SplashScreenViewController: AuthViewControllerDelegate {
             case .failure(let error):
                 UIBlockingProgressHUD.dismiss()
                 print(error)
-                self.errorAlertService.showAlert(on: self, with: .networkError)
+                self.errorAlertService.showAlert(on: self, with: .networkError) {
+                    self.switchToAuthViewController()
+                }
                 break
             }
         }
@@ -113,7 +118,9 @@ extension SplashScreenViewController: AuthViewControllerDelegate {
                 self.switchToTabBarController()
             case .failure:
                 UIBlockingProgressHUD.dismiss()
-                self.errorAlertService.showAlert(on: self, with: .networkError)
+                self.errorAlertService.showAlert(on: self, with: .networkError){
+                    self.switchToAuthViewController()
+                }
                 break
             }
         }

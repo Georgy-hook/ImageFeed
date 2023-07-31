@@ -45,13 +45,8 @@ final class SingleImageViewController: UIViewController {
     var imageURL: String? {
         didSet {
             guard isViewLoaded else { return }
-            guard let url = URL(string: imageURL!) else { return }
-            
-            imageView.kf.indicatorType = .activity
-            imageView.kf.setImage(with: url,
-                                  completionHandler: {_ in
-                self.rescaleAndCenterImageInScrollView(image: self.imageView.image!)
-            })
+            guard let imageURL = imageURL else {return}
+            downloadImage(from: imageURL, to: imageView)
         }
     }
     
@@ -59,15 +54,14 @@ final class SingleImageViewController: UIViewController {
     // MARK: - Life cycle
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        view.backgroundColor = UIColor(named: "YP Black")
+        
         addSubviews()
         applyConstraints()
-        guard let url = URL(string: imageURL!) else { return }
         
-        imageView.kf.indicatorType = .activity
-        imageView.kf.setImage(with: url,
-                              completionHandler: {_ in
-            self.rescaleAndCenterImageInScrollView(image: self.imageView.image!)
-        })
+        guard let imageURL = imageURL else {return}
+        downloadImage(from: imageURL, to: imageView)
     }
     
     // MARK: - Button actions
@@ -99,9 +93,7 @@ final class SingleImageViewController: UIViewController {
             imageView.topAnchor.constraint(equalTo: scrollView.topAnchor),
             imageView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor),
             imageView.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor),
-            imageView.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor),
-            imageView.widthAnchor.constraint(equalTo: scrollView.widthAnchor),
-            imageView.heightAnchor.constraint(equalTo: scrollView.heightAnchor)
+            imageView.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor)
         ])
     }
     

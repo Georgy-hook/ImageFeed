@@ -20,7 +20,7 @@ final class ImagesListViewController: UIViewController {
     //MARK: - Variables
     var photos: [Photo] = []
     private let imagesListService = ImagesListService.shared
-    private var ImagesListServiceObserver: NSObjectProtocol?
+    private var imagesListServiceObserver: NSObjectProtocol?
     private let errorAlertService = ErrorAlertService.shared
     
     //MARK: - Life cycle
@@ -28,6 +28,7 @@ final class ImagesListViewController: UIViewController {
         super.viewDidLoad()
         addSubviews()
         applyConstraints()
+        imagesListService.cleanPhotos()
         addObserver()
         imagesListService.fetchPhotosNextPage(OAuth2TokenStorage.shared.token!)
         tableView.register(ImagesListCell.self, forCellReuseIdentifier: ImagesListCell.reuseIdentifier)
@@ -41,6 +42,7 @@ final class ImagesListViewController: UIViewController {
 extension ImagesListViewController:UITableViewDataSource{
     
     func configCell(for cell: ImagesListCell, with indexPath: IndexPath) {
+        cell.selectionStyle = .none
         cell.configure(with: photos[indexPath.row], at: indexPath)
     }
     
@@ -109,9 +111,9 @@ extension ImagesListViewController{
 //MARK: - Notification center
 extension ImagesListViewController{
     private func addObserver(){
-        ImagesListServiceObserver = NotificationCenter.default
+        imagesListServiceObserver = NotificationCenter.default
             .addObserver(
-                forName: ImagesListService.DidChangeNotification,
+                forName: ImagesListService.didChangeNotification,
                 object: nil,
                 queue: .main
             ) { [weak self] _ in
@@ -122,8 +124,9 @@ extension ImagesListViewController{
     }
     func updateTableViewAnimated(){
         let oldCount = photos.count
-        let newCount = imagesListService.photos.count
         photos = imagesListService.photos
+        let newCount = photos.count
+        
         if oldCount != newCount {
             tableView.performBatchUpdates {
                 let indexPaths = (oldCount..<newCount).map { i in
@@ -143,7 +146,8 @@ extension ImagesListViewController: ImagesListCellDelegate {
         let photo = photos[indexPath.row]
 
         UIBlockingProgressHUD.show()
-        imagesListService.changeLike(photoId: photo.id, isLike: photo.isLiked) { result in
+        imagesListService.changeLike(photoId: photo.id, isLike: photo.isLiked) {[weak self] result in
+            guard let self = self else {return}
             switch result {
             case .success:
 
@@ -153,7 +157,9 @@ extension ImagesListViewController: ImagesListCellDelegate {
             case .failure(let error):
                 UIBlockingProgressHUD.dismiss()
                 
-                self.errorAlertService.showAlert(on: self, with: .unknownError)
+                self.errorAlertService.showAlert(on: self, with: .unknownError){
+                    
+                }
             }
         }
     }

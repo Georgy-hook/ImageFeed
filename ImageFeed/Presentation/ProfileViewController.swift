@@ -14,6 +14,7 @@ final class ProfileViewController: UIViewController {
     //MARK: - Profile ImageView
     private let profileImageView: UIImageView = {
         let imageView = UIImageView()
+        imageView.backgroundColor = .clear
         let profileImage = UIImage(named: "Photo")
         imageView.image = profileImage
         imageView.tintColor = .gray
@@ -62,12 +63,18 @@ final class ProfileViewController: UIViewController {
     private var profileImageServiceObserver: NSObjectProtocol?
     private let profileImageService = ProfileImageService.shared
     private let oAuth2TokenStorage = OAuth2TokenStorage.shared
+    private let imageListService = ImagesListService.shared
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+        view.backgroundColor = UIColor(named: "YP Black")
+        
         addSubviews()
         applyConstraints()
         addObserver()
+        
         guard let personProfile = profileService.profile else{return}
+        
         updateProfileDetails(profile: personProfile)
     }
     
@@ -137,7 +144,7 @@ extension ProfileViewController{
     private func addObserver(){
         profileImageServiceObserver = NotificationCenter.default 
             .addObserver(
-                forName: ProfileImageService.DidChangeNotification,
+                forName: ProfileImageService.didChangeNotification,
                 object: nil,
                 queue: .main
             ) { [weak self] _ in
@@ -151,7 +158,7 @@ extension ProfileViewController{
             let profileImageURL = profileImageService.avatarURL,
             let url = URL(string: profileImageURL)
         else { return }
-        let processor = RoundCornerImageProcessor(cornerRadius: 20)
+        let processor = RoundCornerImageProcessor(cornerRadius: 61)
         profileImageView.kf.indicatorType = .activity
         profileImageView.kf.setImage(with: url,
                               placeholder: UIImage(named: "Placeholder"),
@@ -176,5 +183,6 @@ extension ProfileViewController{
              WKWebsiteDataStore.default().removeData(ofTypes: record.dataTypes, for: [record], completionHandler: {})
           }
        }
+    
     }
 }
