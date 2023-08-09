@@ -14,12 +14,12 @@ final class ProfileImageService{
     private var task: URLSessionTask?
     private var lastToken: String?
     private (set) var avatarURL: String?
-    static let DidChangeNotification = Notification.Name(rawValue: "ProfileImageProviderDidChange")
+    static let didChangeNotification = Notification.Name(rawValue: "ProfileImageProviderDidChange")
     
     func fetchProfileImageURL(username: String, _ token:String, _ completion: @escaping (Result<String, Error>) -> Void){
         NotificationCenter.default
             .post(
-                name: ProfileImageService.DidChangeNotification,
+                name: ProfileImageService.didChangeNotification,
                 object: self,
                 userInfo: ["URL": avatarURL])
         

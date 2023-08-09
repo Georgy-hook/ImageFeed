@@ -6,7 +6,7 @@
 //
 
 import UIKit
-
+import Kingfisher
 final class SingleImageViewController: UIViewController {
     
     // MARK: - Views
@@ -42,23 +42,26 @@ final class SingleImageViewController: UIViewController {
     }()
     
     // MARK: - Variables
-    var image: UIImage? {
+    var imageURL: String? {
         didSet {
             guard isViewLoaded else { return }
-            guard let image = image else { return }
-            imageView.image = image
-            rescaleAndCenterImageInScrollView(image: image)
+            guard let imageURL = imageURL else {return}
+            downloadImage(from: imageURL, to: imageView)
         }
     }
     
+    private let errorAlertService = ErrorAlertService.shared
     // MARK: - Life cycle
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        view.backgroundColor = UIColor(named: "YP Black")
+        
         addSubviews()
         applyConstraints()
-        guard let image = image else { return }
-        imageView.image = image
-        rescaleAndCenterImageInScrollView(image: image)
+        
+        guard let imageURL = imageURL else {return}
+        downloadImage(from: imageURL, to: imageView)
     }
     
     // MARK: - Button actions
@@ -67,7 +70,7 @@ final class SingleImageViewController: UIViewController {
     }
     
     @objc private func didTapShareButton(_ sender: UIButton) {
-        guard let image = image else { return }
+        guard let image = imageView.image else { return }
         let share = UIActivityViewController(activityItems: [image], applicationActivities: nil)
         present(share, animated: true, completion: nil)
     }
@@ -90,9 +93,7 @@ final class SingleImageViewController: UIViewController {
             imageView.topAnchor.constraint(equalTo: scrollView.topAnchor),
             imageView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor),
             imageView.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor),
-            imageView.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor),
-            imageView.widthAnchor.constraint(equalTo: scrollView.widthAnchor),
-            imageView.heightAnchor.constraint(equalTo: scrollView.heightAnchor)
+            imageView.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor)
         ])
     }
     
@@ -132,5 +133,33 @@ extension SingleImageViewController: UIScrollViewDelegate {
 extension SingleImageViewController {
     override var preferredStatusBarStyle: UIStatusBarStyle {
         .lightContent
+    }
+}
+
+//MARK: - Download image
+private extension SingleImageViewController{
+    func downloadImage(from urlString: String?, to imageView:UIImageView){
+        guard let urlString = urlString else {return}
+        guard let url = URL(string: urlString) else {return}
+        UIBlockingProgressHUD.show()
+        imageView.kf.indicatorType = .activity
+        imageView.kf.setImage(with: url,
+                              completionHandler: {[weak self] result in
+            UIBlockingProgressHUD.dismiss()
+            guard let self = self else { return }
+            switch result {
+            case .success(let imageResult):
+                self.rescaleAndCenterImageInScrollView(image: imageResult.image)
+            case .failure:
+                self.showError()
+            }
+        })
+    }
+    
+    func showError() {
+        ErrorAlertService.shared.showErrorAlert(on: self) { [weak self] in
+            guard let self = self else { return }
+            self.downloadImage(from: self.imageURL, to: self.imageView)
+        }
     }
 }

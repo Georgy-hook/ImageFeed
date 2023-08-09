@@ -15,8 +15,6 @@ final class SplashScreenViewController: UIViewController {
         return imageView
     }()
     //MARK: - Varibles
-    private let ShowAuthViewSegueIdentifier = "ShowAuthView"
-    private let ShowImageListViewSegueIdentifier = "ShowImageListView"
     private let profileService = ProfileService.shared
     private let profileImageService = ProfileImageService.shared
     private let errorAlertService = ErrorAlertService.shared
@@ -29,6 +27,9 @@ final class SplashScreenViewController: UIViewController {
     }
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+        
+        guard UIBlockingProgressHUD.isShowing == false else { return }
+        
         if let token = OAuth2TokenStorage.shared.token{
             fetchProfile(token: token)
             if let profileUsername = profileService.profile?.username {
@@ -48,7 +49,7 @@ final class SplashScreenViewController: UIViewController {
         .lightContent
     }
     
-
+    
 }
 //MARK: - Layout
 private extension SplashScreenViewController{
@@ -99,7 +100,9 @@ extension SplashScreenViewController: AuthViewControllerDelegate {
             case .failure(let error):
                 UIBlockingProgressHUD.dismiss()
                 print(error)
-                self.errorAlertService.showAlert(on: self, with: .networkError)
+                self.errorAlertService.showAlert(on: self, with: .networkError) {
+                    self.switchToAuthViewController()
+                }
                 break
             }
         }
@@ -115,7 +118,9 @@ extension SplashScreenViewController: AuthViewControllerDelegate {
                 self.switchToTabBarController()
             case .failure:
                 UIBlockingProgressHUD.dismiss()
-                self.errorAlertService.showAlert(on: self, with: .networkError)
+                self.errorAlertService.showAlert(on: self, with: .networkError){
+                    self.switchToAuthViewController()
+                }
                 break
             }
         }
@@ -124,7 +129,7 @@ extension SplashScreenViewController: AuthViewControllerDelegate {
         profileImageService.fetchProfileImageURL(username: username , token){result in
             switch result {
             case .success(let url):
-                print(url)
+                return
             case .failure(let error):
                 print(error)
             }

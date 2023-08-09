@@ -78,3 +78,8 @@ extension AuthViewController: WebViewViewControllerDelegate{
         vc.dismiss(animated: true)
     }
 }
+extension AuthViewController{
+    override var preferredStatusBarStyle: UIStatusBarStyle{
+        .lightContent
+    }
+}
