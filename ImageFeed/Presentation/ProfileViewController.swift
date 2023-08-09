@@ -9,8 +9,10 @@ import UIKit
 import Kingfisher
 import WebKit
 
-public protocol ProfileViewControllerProtocol{
+public protocol ProfileViewControllerProtocol:AnyObject{
     var presenter: ProfileViewPresenterProtocol? { get set }
+    func switchToAuthViewController()
+    func updateProfileDetails(profile: Profile)
 }
 
 final class ProfileViewController: UIViewController {
@@ -64,11 +66,7 @@ final class ProfileViewController: UIViewController {
     }()
     
     //MARK: - Variables
-    private let profileService = ProfileService.shared
     private var profileImageServiceObserver: NSObjectProtocol?
-    private let profileImageService = ProfileImageService.shared
-    private let oAuth2TokenStorage = OAuth2TokenStorage.shared
-    private let imageListService = ImagesListService.shared
     var presenter: ProfileViewPresenterProtocol?
     
     override func viewDidLoad() {
@@ -79,16 +77,12 @@ final class ProfileViewController: UIViewController {
         applyConstraints()
         addObserver()
         
-        guard let personProfile = profileService.profile else{return}
-        
-        updateProfileDetails(profile: personProfile)
+        presenter?.viewDidLoad()
     }
     
     @objc
     private func didTapButton() {
-        ProfileViewController.clean()
-        oAuth2TokenStorage.token = nil
-        switchToAuthViewController()
+        presenter?.didExitButtonClicked()
     }
 }
 
@@ -136,15 +130,6 @@ extension ProfileViewController{
     }
 }
 
-//MARK: - Profile information fill
-extension ProfileViewController{
-    func updateProfileDetails(profile: Profile){
-        nameLabel.text = profile.name
-        linkLabel.text = profile.loginName
-        descriptionLabel.text = profile.bio
-    }
-}
-
 //MARK: - Notification center new API
 extension ProfileViewController{
     private func addObserver(){
@@ -160,10 +145,7 @@ extension ProfileViewController{
         updateAvatar()
     }
     private func updateAvatar(){
-        guard
-            let profileImageURL = profileImageService.avatarURL,
-            let url = URL(string: profileImageURL)
-        else { return }
+        guard let url = presenter?.getImageUrl() else {return}
         let processor = RoundCornerImageProcessor(cornerRadius: 61)
         profileImageView.kf.indicatorType = .activity
         profileImageView.kf.setImage(with: url,
@@ -172,28 +154,18 @@ extension ProfileViewController{
     }
 }
 
-//MARK: - Exit methods
-extension ProfileViewController{
-    private func switchToAuthViewController(){
+//MARK: - ProfileViewControllerProtocol
+extension ProfileViewController:ProfileViewControllerProtocol{
+    
+    func updateProfileDetails(profile: Profile){
+        nameLabel.text = profile.name
+        linkLabel.text = profile.loginName
+        descriptionLabel.text = profile.bio
+    }
+    
+    func switchToAuthViewController(){
         let splashScreenViewController = SplashScreenViewController()
         splashScreenViewController.modalPresentationStyle = .fullScreen
         present(splashScreenViewController, animated: true)
     }
-    static func clean() {
-       // Очищаем все куки из хранилища.
-       HTTPCookieStorage.shared.removeCookies(since: Date.distantPast)
-       // Запрашиваем все данные из локального хранилища.
-       WKWebsiteDataStore.default().fetchDataRecords(ofTypes: WKWebsiteDataStore.allWebsiteDataTypes()) { records in
-          // Массив полученных записей удаляем из хранилища.
-          records.forEach { record in
-             WKWebsiteDataStore.default().removeData(ofTypes: record.dataTypes, for: [record], completionHandler: {})
-          }
-       }
-    
-    }
-}
-
-//MARK: - ProfileViewControllerProtocol
-extension ProfileViewController:ProfileViewControllerProtocol{
-    
 }
