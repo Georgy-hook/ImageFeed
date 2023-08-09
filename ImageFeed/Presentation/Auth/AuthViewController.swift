@@ -40,8 +40,14 @@ final class AuthViewController: UIViewController {
     
     @objc private func presentWebView() {
         let webVC = WebViewViewController()
-        webVC.modalPresentationStyle = .fullScreen
+        let authHelper = AuthHelper()
+        let webViewPresenter = WebViewPresenter(authHelper: authHelper)
+        
+        webViewPresenter.view = webVC
+        webVC.presenter = webViewPresenter
         webVC.delegate = self
+        
+        webVC.modalPresentationStyle = .fullScreen
         self.present(webVC, animated: true)
     }
 }

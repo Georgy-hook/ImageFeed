@@ -9,6 +9,10 @@ import UIKit
 import Kingfisher
 import WebKit
 
+public protocol ProfileViewControllerProtocol{
+    var presenter: ProfileViewPresenterProtocol? { get set }
+}
+
 final class ProfileViewController: UIViewController {
     
     //MARK: - Profile ImageView
@@ -59,11 +63,13 @@ final class ProfileViewController: UIViewController {
         return button
     }()
     
+    //MARK: - Variables
     private let profileService = ProfileService.shared
     private var profileImageServiceObserver: NSObjectProtocol?
     private let profileImageService = ProfileImageService.shared
     private let oAuth2TokenStorage = OAuth2TokenStorage.shared
     private let imageListService = ImagesListService.shared
+    var presenter: ProfileViewPresenterProtocol?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -185,4 +191,9 @@ extension ProfileViewController{
        }
     
     }
+}
+
+//MARK: - ProfileViewControllerProtocol
+extension ProfileViewController:ProfileViewControllerProtocol{
+    
 }
