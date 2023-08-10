@@ -9,7 +9,7 @@ import UIKit
 import Kingfisher
 import WebKit
 
-public protocol ProfileViewControllerProtocol:AnyObject{
+protocol ProfileViewControllerProtocol:AnyObject{
     var presenter: ProfileViewPresenterProtocol? { get set }
     func switchToAuthViewController()
     func updateProfileDetails(profile: Profile)

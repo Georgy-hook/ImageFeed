@@ -8,7 +8,7 @@
 import UIKit
 import WebKit
 
-public protocol ProfileViewPresenterProtocol{
+protocol ProfileViewPresenterProtocol{
     var view: ProfileViewControllerProtocol? { get set }
     func didExitButtonClicked()
     func viewDidLoad()

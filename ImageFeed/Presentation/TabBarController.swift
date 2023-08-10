@@ -18,6 +18,10 @@ final class TabBarController: UITabBarController {
         self.tabBar.unselectedItemTintColor = UIColor(named: "YP White")
         
         let imagesListViewController = ImagesListViewController()
+        let imagesListPresenter = ImagesListPresenter()
+        imagesListPresenter.view = imagesListViewController
+        imagesListViewController.presenter = imagesListPresenter
+        
         imagesListViewController.tabBarItem = UITabBarItem(
             title: nil,
             image: UIImage(named: "tab_editorial_active"),

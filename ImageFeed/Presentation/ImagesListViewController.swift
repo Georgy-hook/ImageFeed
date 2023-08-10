@@ -7,6 +7,12 @@
 
 import UIKit
 
+protocol ImagesListViewControllerProtocol:AnyObject{
+    var presenter: ImagesListPresenterProtocol? { get set }
+    func updateTableViewAnimated(with indexPaths:[IndexPath])
+    func showAlert()
+}
+
 final class ImagesListViewController: UIViewController {
     //MARK: - Outlets
     private let tableView:UITableView = {
@@ -17,23 +23,25 @@ final class ImagesListViewController: UIViewController {
         tableView.backgroundColor = UIColor(named: "YP Black")
         return tableView
     }()
+    
     //MARK: - Variables
-    var photos: [Photo] = []
-    private let imagesListService = ImagesListService.shared
     private var imagesListServiceObserver: NSObjectProtocol?
     private let errorAlertService = ErrorAlertService.shared
+    var presenter: ImagesListPresenterProtocol?
     
     //MARK: - Life cycle
     override func viewDidLoad() {
         super.viewDidLoad()
         addSubviews()
         applyConstraints()
-        imagesListService.cleanPhotos()
         addObserver()
-        imagesListService.fetchPhotosNextPage(OAuth2TokenStorage.shared.token!)
+        
+        presenter?.viewDidLoad()
+        
         tableView.register(ImagesListCell.self, forCellReuseIdentifier: ImagesListCell.reuseIdentifier)
         tableView.delegate = self
         tableView.dataSource = self
+        
         view.backgroundColor = UIColor(named: "YP Black")
     }
 }
@@ -41,13 +49,8 @@ final class ImagesListViewController: UIViewController {
 //MARK: - TableView DataSource
 extension ImagesListViewController:UITableViewDataSource{
     
-    func configCell(for cell: ImagesListCell, with indexPath: IndexPath) {
-        cell.selectionStyle = .none
-        cell.configure(with: photos[indexPath.row], at: indexPath)
-    }
-    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return photos.count
+        return presenter?.getCountOfRows() ?? 0
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -58,7 +61,7 @@ extension ImagesListViewController:UITableViewDataSource{
             return UITableViewCell()
         }
         imageListCell.delegate = self
-        configCell(for: imageListCell, with: indexPath)
+        presenter?.configCell(for: imageListCell, with: indexPath)
         return imageListCell
     }
 }
@@ -67,23 +70,22 @@ extension ImagesListViewController:UITableViewDataSource{
 extension ImagesListViewController:UITableViewDelegate{
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat{
-        let photo = photos[indexPath.row]
-        let imageWidth = CGFloat(photo.size.width)
-        let imageViewWidth = tableView.bounds.width - 8
-        let scale = imageViewWidth / imageWidth
-        let cellHeight = CGFloat(photo.size.height) * scale + 8
+        guard let cellHeight = presenter?.getCellHeight(for: tableView.bounds.width,
+                                                        with: indexPath)
+        else {return 0}
         return cellHeight
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let singleImageViewController = SingleImageViewController()
-        let imageURL = photos[indexPath.row].largeImageURL
+        let imageURL = presenter?.getImageURL(with: indexPath)
         singleImageViewController.imageURL = imageURL
         singleImageViewController.modalPresentationStyle = .fullScreen
         present(singleImageViewController, animated: true)
     }
+    
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        imagesListService.fetchPhotosNextPage(OAuth2TokenStorage.shared.token!)
+        presenter?.fetchPhotos()
     }
 }
 //MARK: - Layout
@@ -118,23 +120,9 @@ extension ImagesListViewController{
                 queue: .main
             ) { [weak self] _ in
                 guard let self = self else { return }
-                self.updateTableViewAnimated()
+                self.presenter?.shouldUpdateTableView()
             }
-        updateTableViewAnimated()
-    }
-    func updateTableViewAnimated(){
-        let oldCount = photos.count
-        photos = imagesListService.photos
-        let newCount = photos.count
-        
-        if oldCount != newCount {
-            tableView.performBatchUpdates {
-                let indexPaths = (oldCount..<newCount).map { i in
-                    IndexPath(row: i, section: 0)
-                }
-                tableView.insertRows(at: indexPaths, with: .automatic)
-            } completion: { _ in }
-        }
+        presenter?.shouldUpdateTableView()
     }
 }
 
@@ -143,24 +131,22 @@ extension ImagesListViewController: ImagesListCellDelegate {
     func imageListCellDidTapLike(_ cell: ImagesListCell) {
         
         guard let indexPath = tableView.indexPath(for: cell) else { return }
-        let photo = photos[indexPath.row]
+        presenter?.likeButtonTapped(cell, for: indexPath)
+    }
+}
 
-        UIBlockingProgressHUD.show()
-        imagesListService.changeLike(photoId: photo.id, isLike: photo.isLiked) {[weak self] result in
-            guard let self = self else {return}
-            switch result {
-            case .success:
-
-                self.photos = self.imagesListService.photos
-                cell.switchLikeButtonState(to: self.photos[indexPath.row].isLiked)
-                UIBlockingProgressHUD.dismiss()
-            case .failure(let error):
-                UIBlockingProgressHUD.dismiss()
-                
-                self.errorAlertService.showAlert(on: self, with: .unknownError){
-                    
-                }
-            }
+//MARK: - ImagesListViewControllerProtocol
+extension ImagesListViewController:ImagesListViewControllerProtocol{
+    
+    func updateTableViewAnimated(with indexPaths:[IndexPath]){
+        tableView.performBatchUpdates {
+            tableView.insertRows(at: indexPaths, with: .automatic)
+        } completion: { _ in }
+    }
+    
+    func showAlert(){
+        errorAlertService.showAlert(on: self, with: .unknownError){
+            
         }
     }
 }
