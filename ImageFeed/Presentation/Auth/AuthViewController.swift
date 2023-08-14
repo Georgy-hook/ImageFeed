@@ -19,6 +19,7 @@ final class AuthViewController: UIViewController {
     private let webViewButton: UIButton = {
         let button = UIButton()
         button.setTitle("Войти", for: .normal)
+        button.accessibilityIdentifier = "Authenticate"
         button.setTitleColor(UIColor(named: "YP Black"), for: .normal)
         button.titleLabel?.font = UIFont.systemFont(ofSize: 17, weight: .bold)
         button.layer.cornerRadius = 16

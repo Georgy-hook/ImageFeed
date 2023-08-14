@@ -28,6 +28,7 @@ class ImagesListCell: UITableViewCell {
     private let likeButton: UIButton = {
         let button = UIButton()
         button.translatesAutoresizingMaskIntoConstraints = false
+        button.accessibilityIdentifier = "like button"
         button.setTitle("", for: .normal)
         button.addTarget(self, action: #selector(likeButtonClicked), for: .touchUpInside)
         return button
@@ -52,6 +53,7 @@ class ImagesListCell: UITableViewCell {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         contentView.backgroundColor = .clear
         backgroundColor = .clear
+        self.isAccessibilityElement = true
         setupViews()
         applyConstraints()
     }
@@ -116,8 +118,10 @@ extension ImagesListCell{
     func switchLikeButtonState(to isLiked: Bool){
         if isLiked {
             likeButton.setImage(UIImage(named: "Active"), for: .normal)
+           // likeButton.accessibilityIdentifier = "like button off"
         }else{
             likeButton.setImage(UIImage(named: "No Active"), for: .normal)
+            //likeButton.accessibilityIdentifier = "like button on"
         }
     }
     func configure(with photo:Photo, at indexPath: IndexPath){

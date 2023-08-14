@@ -19,6 +19,7 @@ final class WebViewViewController: UIViewController, WKNavigationDelegate {
     // MARK: - Views
     private let webView: WKWebView = {
         let webView = WKWebView()
+        webView.accessibilityIdentifier = "UnsplashWebView"
         webView.translatesAutoresizingMaskIntoConstraints = false
         return webView
     }()

@@ -21,6 +21,7 @@ final class ProfileViewController: UIViewController {
     private let profileImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.backgroundColor = .clear
+        imageView.accessibilityIdentifier = "Profile Image View"
         let profileImage = UIImage(named: "Photo")
         imageView.image = profileImage
         imageView.tintColor = .gray
@@ -30,6 +31,7 @@ final class ProfileViewController: UIViewController {
     //MARK: - Name Label
    private let nameLabel: UILabel = {
         let label = UILabel()
+        label.accessibilityIdentifier = "Profile name label"
         label.text = "Екатерина Новикова"
         label.font = UIFont.systemFont(ofSize: 23)
         label.textColor = UIColor(named: "YP White")
@@ -39,6 +41,7 @@ final class ProfileViewController: UIViewController {
     //MARK: - Link Label
     private let linkLabel: UILabel = {
         let label = UILabel()
+        label.accessibilityIdentifier = "Profile link label"
         label.text = "@ekaterina_nov"
         label.font = UIFont.systemFont(ofSize: 13)
         label.textColor = UIColor(named: "YP Gray")
@@ -48,6 +51,7 @@ final class ProfileViewController: UIViewController {
     //MARK: - Description Label
    private let descriptionLabel: UILabel = {
         let label = UILabel()
+        label.accessibilityIdentifier = "Profile description label"
         label.text = "Hello world"
         label.font = UIFont.systemFont(ofSize: 13)
         label.textColor = UIColor(named: "YP White")
@@ -61,6 +65,7 @@ final class ProfileViewController: UIViewController {
             target: self,
             action: #selector(Self.didTapButton)
         )
+        button.accessibilityIdentifier = "Profile logout button"
         button.tintColor = UIColor(named: "YP Red")
         return button
     }()

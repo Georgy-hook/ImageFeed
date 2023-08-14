@@ -17,6 +17,7 @@ final class ImagesListViewController: UIViewController {
     //MARK: - Outlets
     private let tableView:UITableView = {
         var tableView = UITableView()
+        tableView.accessibilityIdentifier = "ImagesList Table View"
         tableView.translatesAutoresizingMaskIntoConstraints = false
         tableView.separatorStyle = .none
         tableView.contentInset = UIEdgeInsets(top: 12, left: 0, bottom: 12, right: 0)
