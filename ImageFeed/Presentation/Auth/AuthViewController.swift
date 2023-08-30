@@ -19,6 +19,7 @@ final class AuthViewController: UIViewController {
     private let webViewButton: UIButton = {
         let button = UIButton()
         button.setTitle("Войти", for: .normal)
+        button.accessibilityIdentifier = "Authenticate"
         button.setTitleColor(UIColor(named: "YP Black"), for: .normal)
         button.titleLabel?.font = UIFont.systemFont(ofSize: 17, weight: .bold)
         button.layer.cornerRadius = 16
@@ -40,8 +41,14 @@ final class AuthViewController: UIViewController {
     
     @objc private func presentWebView() {
         let webVC = WebViewViewController()
-        webVC.modalPresentationStyle = .fullScreen
+        let authHelper = AuthHelper()
+        let webViewPresenter = WebViewPresenter(authHelper: authHelper)
+        
+        webViewPresenter.view = webVC
+        webVC.presenter = webViewPresenter
         webVC.delegate = self
+        
+        webVC.modalPresentationStyle = .fullScreen
         self.present(webVC, animated: true)
     }
 }
